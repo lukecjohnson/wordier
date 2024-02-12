@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "esbuild src/app.js src/styles.css --bundle --minify --outdir=public",
+    "dev": "esbuild src/app.js src/styles.css --bundle --outdir=public --servedir=public"
+  },
+  "devDependencies": {
+    "esbuild": "^0.20.0"
+  }
+}
