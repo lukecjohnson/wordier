@@ -1,3 +1,10 @@
+@font-face {
+  font-family: "GT Flexa";
+  font-weight: 400;
+  font-style: normal;
+  src: url("/GT-Flexa-Standard-Regular.woff2") format("woff2");
+}
+
 :root {
   --color-base-100: #f5f5f5;
   --color-base-200: #bfbfbf;
@@ -40,7 +47,70 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-#board {
+button {
+  font-family: inherit;
+  font-size: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.button {
+  height: 48px;
+  min-width: 224px;
+  padding: 0 20px;
+  background-color: var(--color-base-100);
+  border: 1px solid var(--color-base-100);
+  border-radius: 24px;
+  color: var(--color-base-800);
+  font-size: 18px;
+  transition: all 250ms linear;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+.header {
+  width: 100%;
+  height: 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.logo svg {
+  height: 36px;
+  color: var(--color-base-100);
+  margin-bottom: 4px;
+}
+
+.icon {
+  width: 24px;
+  color: var(--color-base-400);
+  transition: color 250ms linear;
+}
+
+.icon-button {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+  transition: background-color 250ms linear;
+}
+
+.board {
   width: 100%;
   max-width: 640px;
   aspect-ratio: 1;
@@ -50,6 +120,11 @@ body {
   grid-row: 2;
   margin: 0 auto;
   margin-top: calc(2vh + 32px);
+}
+
+.board.blurred {
+  filter: blur(min(2.5vw, 16px));
+  transform: translate3d(0, 0, 0) scale(0.95);
 }
 
 .letter {
@@ -76,8 +151,86 @@ body {
   animation-delay: calc((var(--col) + 1) * 50ms);
 }
 
+.clock {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  grid-row: 3;
+  grid-column: 1;
+  transition: all 500ms cubic-bezier(0.25, 1, 0.5, 1);
+  transition-delay: 250ms;
+}
+
+.clock.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(calc(100% + 6vh));
+  transition-delay: 1000ms;
+}
+
+.clock.paused .clock-icon-pause,
+.clock:not(.paused) .clock-icon-play {
+  display: none;
+}
+
+.clock-button {
+  height: 40px;
+  min-width: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background-color: var(--color-base-700);
+  color: var(--color-base-100);
+  font-variant-numeric: tabular-nums;
+  border-radius: 20px;
+}
+
+.start {
+  width: 100%;
+  grid-row: 3;
+  grid-column: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--color-base-400);
+  position: relative;
+  z-index: 20;
+  box-shadow: 0 0 30vh 30vh var(--color-base-800);
+  transition: all 500ms cubic-bezier(0.25, 1, 0.5, 1);
+  transition-delay: 1000ms;
+}
+
+.start.hidden {
+  opacity: 0;
+  visibility: none;
+  pointer-events: none;
+  box-shadow: 0 0 0 0 var(--color-base-800);
+  transform: translateY(calc(100% + 6vh));
+  transition-delay: 0ms;
+}
+
 @keyframes jump {
   50% {
     transform: translateY(-0.125em);
+  }
+}
+
+@media (hover: hover) {
+  .button:hover {
+    background-color: var(--color-base-200);
+    border-color: var(--color-base-200);
+  }
+
+  .icon-button:hover {
+    background-color: var(--color-base-600);
+  }
+
+  .icon-button:hover svg {
+    color: var(--color-base-300);
   }
 }
