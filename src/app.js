@@ -91,9 +91,9 @@ function renderStats() {
     ? `${Math.round((solved.length / all.length) * 100)}%`
     : '–';
 
-  if (!history[date] || !navigator.share) {
-    elements.stats.buttons.share.style.display = 'none';
-  }
+  elements.stats.buttons.share.style.display = history[date] && navigator.share
+    ? ''
+    : 'none';
 }
 
 function openStatsDialog() {
@@ -134,9 +134,12 @@ function checkRows(rows) {
     stopClock();
     state.history[date] = state.time;
     localStorage.setItem('history', JSON.stringify(state.history));
+    elements.start.button.textContent = 'View stats';
     renderStats();
     setTimeout(() => {
       openStatsDialog();
+      elements.start.root.classList.remove('hidden');
+      elements.clock.root.classList.add('hidden');
     }, 1000);
   }
 }
