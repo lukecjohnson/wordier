@@ -1,69 +1,63 @@
-import { words } from "./words";
-import { puzzles } from "./puzzles";
+import { puzzles } from './puzzles';
+import { words } from './words';
+
+const persistedDate = localStorage.getItem('date');
+const date = new Date().toISOString().split('T')[0];
+
+const state = {
+  letters: date === persistedDate
+    ? JSON.parse(localStorage.getItem('letters'))
+    : puzzles[date],
+  time: date === persistedDate ? +localStorage.getItem('time') : 0,
+  history: JSON.parse(localStorage.getItem('history')) ?? {},
+  solvedRows: new Set(),
+  started: false,
+  paused: false,
+  intervals: { clock: null, autoplay: null },
+};
 
 const elements = {
-  board: document.querySelector(".board"),
-  letters: document.querySelectorAll(".letter"),
+  board: document.querySelector('.board'),
+  letters: document.querySelectorAll('.letter'),
   start: {
-    root: document.querySelector(".start"),
-    button: document.querySelector(".start .button"),
+    root: document.querySelector('.start'),
+    button: document.querySelector('.start .button'),
+    countdown: document.querySelector('#start-countdown'),
   },
   clock: {
-    root: document.querySelector(".clock"),
-    button: document.querySelector(".clock-button"),
-    time: document.querySelector(".clock-time"),
+    root: document.querySelector('.clock'),
+    button: document.querySelector('.clock-button'),
+    time: document.querySelector('.clock-time'),
   },
   stats: {
     dialog: document.querySelector('#stats-dialog'),
     buttons: {
       open: document.querySelector('#stats-button-open'),
       close: document.querySelector('#stats-button-close'),
-      share: document.querySelector('#stats-button-share')
+      share: document.querySelector('#stats-button-share'),
     },
     values: {
-      today: document.querySelector("#stats-value-today"),
-      average: document.querySelector("#stats-value-average"),
-      solved: document.querySelector("#stats-value-solved"),
-      rate: document.querySelector("#stats-value-rate"),
+      today: document.querySelector('#stats-value-today'),
+      average: document.querySelector('#stats-value-average'),
+      solved: document.querySelector('#stats-value-solved'),
+      rate: document.querySelector('#stats-value-rate'),
     },
   },
 };
 
-const persistedDate = localStorage.getItem("date");
-const date = new Date().toISOString().split("T")[0];
-
-const state = {
-  letters: date === persistedDate
-    ? JSON.parse(localStorage.getItem("letters"))
-    : puzzles[date],
-  time: date === persistedDate ? +localStorage.getItem("time") : 0,
-  history: JSON.parse(localStorage.getItem("history")) ?? {},
-  solvedRows: new Set(),
-  started: false,
-  paused: false,
-  intervals: {
-    clock: null,
-    autoplay: null,
-  },
-};
-
-localStorage.setItem("date", date);
-localStorage.setItem("letters", JSON.stringify(state.letters));
-localStorage.setItem("time", state.time);
-
 function formatTime(s) {
-  return `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, "0")}`;
+  return `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
 }
 
 function startClock() {
   state.intervals.clock = setInterval(() => {
     state.time++;
-    localStorage.setItem("time", state.time);
+    localStorage.setItem('time', state.time);
     elements.clock.time.textContent = formatTime(state.time);
   }, 1000);
   state.paused = false;
-  elements.clock.root.classList.remove("paused");
-  elements.board.classList.remove("blurred");
+  elements.clock.root.classList.remove('paused');
+  elements.board.classList.remove('blurred');
 }
 
 function stopClock(pause = false) {
@@ -71,8 +65,8 @@ function stopClock(pause = false) {
   state.intervals.clock = null;
   if (pause) {
     state.paused = true;
-    elements.clock.root.classList.add("paused");
-    elements.board.classList.add("blurred");
+    elements.clock.root.classList.add('paused');
+    elements.board.classList.add('blurred');
   }
 }
 
@@ -83,11 +77,11 @@ function renderStats() {
 
   elements.stats.values.today.textContent = state.history[date]
     ? formatTime(state.history[date])
-    : "-";
+    : '-';
 
   elements.stats.values.average.textContent = solved.length > 0
     ? formatTime(Math.round(totalTime / solved.length))
-    : "–";
+    : '–';
 
   elements.stats.values.solved.textContent = solved.length > 0
     ? solved.length
@@ -127,19 +121,19 @@ function checkRows(rows) {
       return acc;
     }, [])
     .forEach(({ row, letters, elements }) => {
-      if (words[letters.join("")]) {
+      if (words[letters.join('')]) {
         state.solvedRows.add(row);
-        elements.forEach((el) => el.classList.add("solved"));
+        elements.forEach((el) => el.classList.add('solved'));
       } else {
         state.solvedRows.delete(row);
-        elements.forEach((el) => el.classList.remove("solved"));
+        elements.forEach((el) => el.classList.remove('solved'));
       }
     });
 
   if (state.solvedRows.size === 5 && state.started) {
     stopClock();
     state.history[date] = state.time;
-    localStorage.setItem("history", JSON.stringify(state.history));
+    localStorage.setItem('history', JSON.stringify(state.history));
     renderStats();
     setTimeout(() => {
       openStatsDialog();
@@ -152,16 +146,16 @@ function swap(letters, a, x, y, check = true, persist = true) {
     return row === letters[a].row + y && col === letters[a].col + x;
   });
 
-  elements.letters[a].style.setProperty("--row", letters[b].row);
-  elements.letters[a].style.setProperty("--col", letters[b].col);
-  elements.letters[b].style.setProperty("--row", letters[a].row);
-  elements.letters[b].style.setProperty("--col", letters[a].col);
+  elements.letters[a].style.setProperty('--row', letters[b].row);
+  elements.letters[a].style.setProperty('--col', letters[b].col);
+  elements.letters[b].style.setProperty('--row', letters[a].row);
+  elements.letters[b].style.setProperty('--col', letters[a].col);
 
   [letters[a].row, letters[b].row] = [letters[b].row, letters[a].row];
   [letters[a].col, letters[b].col] = [letters[b].col, letters[a].col];
 
   if (persist) {
-    localStorage.setItem("letters", JSON.stringify(letters));
+    localStorage.setItem('letters', JSON.stringify(letters));
   }
 
   if (check) {
@@ -171,10 +165,10 @@ function swap(letters, a, x, y, check = true, persist = true) {
 
 function renderLetters(letters, handleEvents) {
   elements.letters.forEach((letter, i) => {
-    letter.className = "letter";
+    letter.className = 'letter';
     letter.innerText = letters[i].value;
-    letter.style.setProperty("--row", letters[i].row);
-    letter.style.setProperty("--col", letters[i].col);
+    letter.style.setProperty('--row', letters[i].row);
+    letter.style.setProperty('--col', letters[i].col);
 
     if (handleEvents) {
       const origin = { x: 0, y: 0 };
@@ -186,34 +180,33 @@ function renderLetters(letters, handleEvents) {
 
       letter.ontouchmove = (event) => {
         event.currentTarget.style.zIndex = 10;
-        event.currentTarget.style.boxShadow =
-          "0px 0px 8px 2px rgba(0, 0, 0, 0.25)";
-        event.currentTarget.style.animation = "none";
+        event.currentTarget.style.boxShadow = '0px 0px 8px 2px rgba(0, 0, 0, 0.25)';
+        event.currentTarget.style.animation = 'none';
 
         const x = event.changedTouches[0].clientX - origin.x;
         const y = event.changedTouches[0].clientY - origin.y;
 
         if (Math.abs(x) > Math.abs(y)) {
-          event.currentTarget.style.setProperty("--nudge-y", "0%");
+          event.currentTarget.style.setProperty('--nudge-y', '0%');
           event.currentTarget.style.setProperty(
-            "--nudge-x",
-            x > 0 ? "5%" : "-5%",
+            '--nudge-x',
+            x > 0 ? '5%' : '-5%',
           );
         } else {
-          event.currentTarget.style.setProperty("--nudge-x", "0%");
+          event.currentTarget.style.setProperty('--nudge-x', '0%');
           event.currentTarget.style.setProperty(
-            "--nudge-y",
-            y > 0 ? "5%" : "-5%",
+            '--nudge-y',
+            y > 0 ? '5%' : '-5%',
           );
         }
       };
 
       letter.ontouchend = (event) => {
         event.currentTarget.style.zIndex = 0;
-        event.currentTarget.style.boxShadow = "";
-        event.currentTarget.style.animation = "";
-        event.currentTarget.style.setProperty("--nudge-x", "0%");
-        event.currentTarget.style.setProperty("--nudge-y", "0%");
+        event.currentTarget.style.boxShadow = '';
+        event.currentTarget.style.animation = '';
+        event.currentTarget.style.setProperty('--nudge-x', '0%');
+        event.currentTarget.style.setProperty('--nudge-y', '0%');
 
         if (!state.started || state.paused || state.history[date]) {
           return;
@@ -235,8 +228,6 @@ function renderLetters(letters, handleEvents) {
             swap(letters, i, 0, -1);
           }
         }
-
-
       };
     }
   });
@@ -250,10 +241,9 @@ function startAutoplay() {
     .sort(() => 0.5 - Math.random())
     .map((position, i) => ({
       ...position,
-      value:
-        i < 10
-          ? state.letters[i].value
-          : "abcdefghijklmnopqrstuvwxyz"[Math.floor(Math.random() * 26)],
+      value: i < 10
+        ? state.letters[i].value
+        : 'abcdefghijklmnopqrstuvwxyz'[Math.floor(Math.random() * 26)],
     }));
 
   renderLetters(letters);
@@ -286,15 +276,40 @@ function startGame() {
   checkRows([0, 1, 2, 3, 4]);
   stopAutoplay();
   startClock();
-  elements.start.root.classList.add("hidden");
-  elements.clock.root.classList.remove("hidden");
+  elements.start.root.classList.add('hidden');
+  elements.clock.root.classList.remove('hidden');
   state.started = true;
   state.history[date] = null;
-  localStorage.setItem("history", JSON.stringify(state.history));
+  localStorage.setItem('history', JSON.stringify(state.history));
+}
+
+function renderCountdown() {
+  const tomorrow = new Date();
+  tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
+  tomorrow.setUTCHours(0, 0, 0, 0);
+
+  const diff = Math.ceil((tomorrow.getTime() - Date.now()) / 60000);
+
+  elements.start.countdown.textContent = (
+    state.history[date]
+      ? 'Next daily puzzle begins in '
+      : "Today's puzzle ends in "
+  ) + (
+    diff <= 60
+      ? `${diff} minutes`
+      : `${Math.ceil(diff / 60)} hours`
+  );
+}
+
+function startCountdown() {
+  renderCountdown();
+  setInterval(renderCountdown, 60000);
 }
 
 function handleStartButtonClick() {
-  if (!state.history[date]) {
+  if (state.history[date]) {
+    openStatsDialog();
+  } else {
     startGame();
   }
 }
@@ -308,7 +323,7 @@ function handleClockButtonClick() {
 }
 
 function handleVisibilityChange() {
-  if (document.visibilityState === "hidden") {
+  if (document.visibilityState === 'hidden') {
     stopClock();
   } else if (state.started && !state.paused && !state.history[date]) {
     startClock();
@@ -316,17 +331,18 @@ function handleVisibilityChange() {
 }
 
 function init() {
-  if (!state.history[date]) {
-    startAutoplay();
-  } else {
+  if (state.history[date]) {
     renderLetters(state.letters);
     checkRows([0, 1, 2, 3, 4]);
+    elements.start.button.textContent = 'View stats';
+  } else {
+    startAutoplay();
+    if (state.time > 0) {
+      elements.start.button.textContent = 'Continue playing';
+    }
   }
 
-  if (state.time > 0) {
-    elements.start.button.textContent = "Continue playing";
-  }
-
+  startCountdown();
   renderStats();
   elements.clock.time.textContent = formatTime(state.time);
   elements.start.button.onclick = handleStartButtonClick;
@@ -334,6 +350,10 @@ function init() {
   elements.stats.buttons.close.onclick = closeStatsDialog;
   elements.clock.button.onclick = handleClockButtonClick;
   document.onvisibilitychange = handleVisibilityChange;
+
+  localStorage.setItem('date', date);
+  localStorage.setItem('letters', JSON.stringify(state.letters));
+  localStorage.setItem('time', state.time);
 }
 
 document.addEventListener('DOMContentLoaded', init);
