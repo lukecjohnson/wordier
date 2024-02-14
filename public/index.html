@@ -9,7 +9,7 @@
 
 <body>
   <header class="header">
-    <button id="stats-button" class="icon-button">
+    <button id="stats-button-open" class="icon-button">
       <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="1.5"
         stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125
@@ -93,7 +93,36 @@
   <div class="start">
     <button class="button">Play</button>
   </div>
-  </div>
+  <dialog id="stats-dialog" class="dialog">
+    <header class="dialog-header">
+      <div class="dialog-title">Stats</div>
+      <button id="stats-button-close" class="icon-button">
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="1.5"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </header>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-title">Today</div>
+        <div id="stats-value-today" class="stat-value">–</div>
+      </div>
+      <div class="stat">
+        <div class="stat-title">Average</div>
+        <div id="stats-value-average" class="stat-value">–</div>
+      </div>
+      <div class="stat">
+        <div class="stat-title">Puzzles solved</div>
+        <div id="stats-value-solved" class="stat-value">–</div>
+      </div>
+      <div class="stat">
+        <div class="stat-title">Solve rate</div>
+        <div id="stats-value-rate" class="stat-value">–</div>
+      </div>
+    </div>
+    <button id="stats-button-share" class="button dialog-button">Share</button>
+  </dialog>
   <script src="/app.js"></script>
 </body>
 

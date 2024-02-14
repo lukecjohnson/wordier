@@ -65,7 +65,7 @@ button {
   color: var(--color-base-800);
   font-size: 18px;
   transition: all 250ms linear;
-  display: inline-flex;
+  display: flex;
   justify-content: center;
   align-items: center;
   gap: 6px;
@@ -214,6 +214,77 @@ button {
   transition-delay: 0ms;
 }
 
+.dialog {
+  width: 100%;
+  max-width: 480px;
+  padding: 20px 20px 32px;
+  top: auto;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 30;
+  color: var(--color-base-100);
+  background-color: var(--color-base-700);
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 0 0 100vmax rgba(10, 10, 10, 0.75);
+  border: none;
+  outline: none;
+  transition: all 500ms cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.dialog:not([open]) {
+  display: block;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(100%);
+  box-shadow: 0 0 0 100vmax transparent;
+}
+
+.dialog::backdrop {
+  display: none;
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.dialog-title {
+  font-size: 24px;
+}
+
+.dialog-button {
+  margin: 32px auto 0;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  background-color: var(--color-base-600);
+  border-radius: 8px;
+}
+
+.stat-title {
+  font-size: 14px;
+  color: var(--color-base-300);
+  line-height: 1.15;
+}
+
+.stat-value {
+  font-size: 24px;
+}
+
 @keyframes jump {
   50% {
     transform: translateY(-0.125em);
@@ -232,5 +303,18 @@ button {
 
   .icon-button:hover svg {
     color: var(--color-base-300);
+  }
+}
+
+@media (min-width: 640px) {
+  .dialog {
+    max-width: 480px;
+    top: 0;
+    border-radius: 16px;
+  }
+
+  .dialog:not([open]) {
+    transform: translateY(20px);
+    opacity: 0;
   }
 }
