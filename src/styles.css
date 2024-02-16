@@ -112,7 +112,7 @@ button {
   transition: background-color 250ms linear;
 }
 
-.board {
+#board {
   width: 100%;
   max-width: 640px;
   aspect-ratio: 1;
@@ -122,12 +122,12 @@ button {
   transition: all 500ms cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-.board.blurred {
+#board.blurred {
   filter: blur(min(2.5vw, 16px));
   transform: translate3d(0, 0, 0) scale(0.95);
 }
 
-.letter {
+.tile {
   width: 17.5%;
   aspect-ratio: 1;
   position: absolute;
@@ -145,13 +145,13 @@ button {
   transition: all 250ms cubic-bezier(0.61, 1, 0.88, 1);
 }
 
-.letter.solved {
+.tile.solved {
   background-color: var(--color-accent);
   animation: jump 400ms cubic-bezier(0.65, 0, 0.35, 1);
   animation-delay: calc((var(--col) + 1) * 50ms);
 }
 
-.clock {
+#clock {
   height: 100%;
   display: flex;
   justify-content: center;
@@ -162,7 +162,7 @@ button {
   transition-delay: 250ms;
 }
 
-.clock.hidden {
+#clock.hidden {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -170,12 +170,12 @@ button {
   transition-delay: 1000ms;
 }
 
-.clock.paused .clock-icon-pause,
-.clock:not(.paused) .clock-icon-play {
+#clock.paused .clock-icon-pause,
+#clock:not(.paused) .clock-icon-play {
   display: none;
 }
 
-.clock-button {
+#clock-button {
   height: 40px;
   min-width: 96px;
   display: flex;

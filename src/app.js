@@ -5,8 +5,8 @@ const persistedDate = localStorage.getItem('date');
 const date = new Date().toISOString().split('T')[0];
 
 const state = {
-  letters: date === persistedDate
-    ? JSON.parse(localStorage.getItem('letters'))
+  tiles: date === persistedDate
+    ? JSON.parse(localStorage.getItem('tiles'))
     : puzzles[date],
   time: date === persistedDate ? +localStorage.getItem('time') : 0,
   history: JSON.parse(localStorage.getItem('history')) ?? {},
@@ -17,17 +17,19 @@ const state = {
 };
 
 const elements = {
-  board: document.querySelector('.board'),
-  letters: document.querySelectorAll('.letter'),
+  board: {
+    root: document.querySelector('#board'),
+    tiles: document.querySelectorAll('#board .tile'),
+  },
   start: {
     root: document.querySelector('.start'),
     button: document.querySelector('.start .button'),
     countdown: document.querySelector('#start-countdown'),
   },
   clock: {
-    root: document.querySelector('.clock'),
-    button: document.querySelector('.clock-button'),
-    time: document.querySelector('.clock-time'),
+    root: document.querySelector('#clock'),
+    button: document.querySelector('#clock-button'),
+    time: document.querySelector('#clock-time'),
   },
   stats: {
     dialog: document.querySelector('#stats-dialog'),
@@ -57,7 +59,7 @@ function startClock() {
   }, 1000);
   state.paused = false;
   elements.clock.root.classList.remove('paused');
-  elements.board.classList.remove('blurred');
+  elements.board.root.classList.remove('blurred');
 }
 
 function stopClock(pause = false) {
@@ -66,7 +68,7 @@ function stopClock(pause = false) {
   if (pause) {
     state.paused = true;
     elements.clock.root.classList.add('paused');
-    elements.board.classList.add('blurred');
+    elements.board.root.classList.add('blurred');
   }
 }
 
@@ -111,17 +113,17 @@ function closeStatsDialog() {
 }
 
 function checkRows(rows) {
-  state.letters
+  state.tiles
     .reduce((acc, { row, col, value }, i) => {
       if (rows.includes(row)) {
-        acc[row] ??= { row, letters: [], elements: [] };
-        acc[row].letters[col] = value;
-        acc[row].elements.push(elements.letters[i]);
+        acc[row] ??= { row, tiles: [], elements: [] };
+        acc[row].tiles[col] = value;
+        acc[row].elements.push(elements.board.tiles[i]);
       }
       return acc;
     }, [])
-    .forEach(({ row, letters, elements }) => {
-      if (words[letters.join('')]) {
+    .forEach(({ row, tiles, elements }) => {
+      if (words[tiles.join('')]) {
         state.solvedRows.add(row);
         elements.forEach((el) => el.classList.add('solved'));
       } else {
@@ -144,44 +146,43 @@ function checkRows(rows) {
   }
 }
 
-function swap(letters, a, x, y, check = true, persist = true) {
-  const b = letters.findIndex(({ row, col }) => {
-    return row === letters[a].row + y && col === letters[a].col + x;
+function swap(tiles, a, x, y, check = true, persist = true) {
+  const b = tiles.findIndex(({ row, col }) => {
+    return row === tiles[a].row + y && col === tiles[a].col + x;
   });
 
-  elements.letters[a].style.setProperty('--row', letters[b].row);
-  elements.letters[a].style.setProperty('--col', letters[b].col);
-  elements.letters[b].style.setProperty('--row', letters[a].row);
-  elements.letters[b].style.setProperty('--col', letters[a].col);
+  elements.board.tiles[a].style.setProperty('--row', tiles[b].row);
+  elements.board.tiles[a].style.setProperty('--col', tiles[b].col);
+  elements.board.tiles[b].style.setProperty('--row', tiles[a].row);
+  elements.board.tiles[b].style.setProperty('--col', tiles[a].col);
 
-  [letters[a].row, letters[b].row] = [letters[b].row, letters[a].row];
-  [letters[a].col, letters[b].col] = [letters[b].col, letters[a].col];
+  [tiles[a].row, tiles[b].row] = [tiles[b].row, tiles[a].row];
+  [tiles[a].col, tiles[b].col] = [tiles[b].col, tiles[a].col];
 
   if (persist) {
-    localStorage.setItem('letters', JSON.stringify(letters));
+    localStorage.setItem('tiles', JSON.stringify(tiles));
   }
 
   if (check) {
-    checkRows(y === 0 ? [letters[a].row] : [letters[a].row, letters[b].row]);
+    checkRows(y === 0 ? [tiles[a].row] : [tiles[a].row, tiles[b].row]);
   }
 }
 
-function renderLetters(letters, handleEvents) {
-  elements.letters.forEach((letter, i) => {
-    letter.className = 'letter';
-    letter.innerText = letters[i].value;
-    letter.style.setProperty('--row', letters[i].row);
-    letter.style.setProperty('--col', letters[i].col);
+function renderTiles(tiles, handleEvents) {
+  elements.board.tiles.forEach((tile, i) => {
+    tile.innerText = tiles[i].value;
+    tile.style.setProperty('--row', tiles[i].row);
+    tile.style.setProperty('--col', tiles[i].col);
 
     if (handleEvents) {
       const origin = { x: 0, y: 0 };
 
-      letter.ontouchstart = (event) => {
+      tile.ontouchstart = (event) => {
         origin.x = event.touches[0].clientX;
         origin.y = event.touches[0].clientY;
       };
 
-      letter.ontouchmove = (event) => {
+      tile.ontouchmove = (event) => {
         event.currentTarget.style.zIndex = 10;
         event.currentTarget.style.boxShadow = '0px 0px 8px 2px rgba(0, 0, 0, 0.25)';
         event.currentTarget.style.animation = 'none';
@@ -204,7 +205,7 @@ function renderLetters(letters, handleEvents) {
         }
       };
 
-      letter.ontouchend = (event) => {
+      tile.ontouchend = (event) => {
         event.currentTarget.style.zIndex = 0;
         event.currentTarget.style.boxShadow = '';
         event.currentTarget.style.animation = '';
@@ -219,16 +220,16 @@ function renderLetters(letters, handleEvents) {
         const y = event.changedTouches[0].clientY - origin.y;
 
         if (Math.abs(x) > Math.abs(y)) {
-          if (x > 10 && letters[i].col < 4) {
-            swap(letters, i, 1, 0);
-          } else if (x < -10 && letters[i].col > 0) {
-            swap(letters, i, -1, 0);
+          if (x > 10 && tiles[i].col < 4) {
+            swap(tiles, i, 1, 0);
+          } else if (x < -10 && tiles[i].col > 0) {
+            swap(tiles, i, -1, 0);
           }
         } else {
-          if (y > 10 && letters[i].row < 4) {
-            swap(letters, i, 0, 1);
-          } else if (y < -10 && letters[i].row > 0) {
-            swap(letters, i, 0, -1);
+          if (y > 10 && tiles[i].row < 4) {
+            swap(tiles, i, 0, 1);
+          } else if (y < -10 && tiles[i].row > 0) {
+            swap(tiles, i, 0, -1);
           }
         }
       };
@@ -237,7 +238,7 @@ function renderLetters(letters, handleEvents) {
 }
 
 function startAutoplay() {
-  const letters = Array.from({ length: 25 }, (_, i) => ({
+  const tiles = Array.from({ length: 25 }, (_, i) => ({
     row: Math.max(Math.ceil(i / 5) - (i % 5 === 0 ? 0 : 1), 0),
     col: i % 5,
   }))
@@ -245,27 +246,27 @@ function startAutoplay() {
     .map((position, i) => ({
       ...position,
       value: i < 10
-        ? state.letters[i].value
+        ? state.tiles[i].value
         : 'abcdefghijklmnopqrstuvwxyz'[Math.floor(Math.random() * 26)],
     }));
 
-  renderLetters(letters);
+  renderTiles(tiles);
 
   state.intervals.autoplay = setInterval(() => {
-    const i = Math.floor(Math.random() * letters.length);
+    const i = Math.floor(Math.random() * tiles.length);
     let [x, y] = Math.round(Math.random()) ? [1, 0] : [0, 1];
 
-    if (x && letters[i].col === 4) {
+    if (x && tiles[i].col === 4) {
       x = -1;
-    } else if (x && letters[i].col > 0) {
+    } else if (x && tiles[i].col > 0) {
       x = x * (Math.round(Math.random()) ? 1 : -1);
-    } else if (y && letters[i].row === 4) {
+    } else if (y && tiles[i].row === 4) {
       y = -1;
-    } else if (y && letters[i].row > 0) {
+    } else if (y && tiles[i].row > 0) {
       y = y * (Math.round(Math.random()) ? 1 : -1);
     }
 
-    swap(letters, i, x, y, false, false);
+    swap(tiles, i, x, y, false, false);
   }, 500);
 }
 
@@ -275,7 +276,7 @@ function stopAutoplay() {
 }
 
 function startGame() {
-  renderLetters(state.letters, true);
+  renderTiles(state.tiles, true);
   checkRows([0, 1, 2, 3, 4]);
   stopAutoplay();
   startClock();
@@ -335,7 +336,7 @@ function handleVisibilityChange() {
 
 function init() {
   if (state.history[date]) {
-    renderLetters(state.letters);
+    renderTiles(state.tiles);
     checkRows([0, 1, 2, 3, 4]);
     elements.start.button.textContent = 'View stats';
   } else {
@@ -355,7 +356,7 @@ function init() {
   document.onvisibilitychange = handleVisibilityChange;
 
   localStorage.setItem('date', date);
-  localStorage.setItem('letters', JSON.stringify(state.letters));
+  localStorage.setItem('tiles', JSON.stringify(state.tiles));
   localStorage.setItem('time', state.time);
 }
 
