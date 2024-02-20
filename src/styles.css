@@ -101,10 +101,6 @@ button {
   align-items: center;
   border-radius: 20px;
   transition: background-color 250ms linear;
-
-  &.filled {
-    background-color: var(--color-base-600);
-  }
 }
 
 #board {
@@ -285,7 +281,13 @@ button {
   font-size: 24px;
 }
 
-.dialog-button {
+.dialog-button-close {
+  width: 32px;
+  height: 32px;
+  background-color: var(--color-base-600);
+}
+
+.dialog-button-primary {
   margin: 32px auto 0;
 }
 
@@ -344,10 +346,10 @@ button {
         color: var(--color-base-300);
       }
     }
+  }
 
-    &.filled:hover {
-      background-color: var(--color-base-500);
-    }
+  .dialog-button-close:hover {
+    background-color: var(--color-base-500);
   }
 }
 
