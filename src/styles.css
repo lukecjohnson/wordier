@@ -81,18 +81,9 @@ button {
 }
 
 .logo {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 400;
-  display: flex;
-  align-items: center;
-  gap: 8px;
   margin: 0;
-
-  svg {
-    height: 36px;
-    color: var(--color-base-100);
-    margin-bottom: 4px;
-  }
 }
 
 .icon {
