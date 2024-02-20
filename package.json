@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "build": "esbuild src/app.js src/styles.css \"--external:*.woff2\" --bundle --minify --outdir=public",
+    "build": "esbuild src/app.js src/styles.css \"--external:*.woff2\" --bundle --minify --target=chrome87,edge88,firefox78,safari14 --outdir=public",
     "dev": "esbuild src/app.js src/styles.css \"--external:*.woff2\" --bundle --outdir=public --servedir=public"
   },
   "devDependencies": {

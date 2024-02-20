@@ -5,15 +5,43 @@ const persistedDate = localStorage.getItem('date');
 const date = new Date().toISOString().split('T')[0];
 
 const state = {
-  tiles: date === persistedDate
-    ? JSON.parse(localStorage.getItem('tiles'))
-    : puzzles[date],
+  tiles: {
+    puzzle: date === persistedDate
+      ? JSON.parse(localStorage.getItem('tiles'))
+      : puzzles[date],
+    demo: [
+      { value: 's', row: 0, col: 0 },
+      { value: 'h', row: 0, col: 1 },
+      { value: 'd', row: 0, col: 2 },
+      { value: 'p', row: 0, col: 3 },
+      { value: 'e', row: 0, col: 4 },
+      { value: 'o', row: 1, col: 0 },
+      { value: 'r', row: 1, col: 1 },
+      { value: 'a', row: 1, col: 2 },
+      { value: 'r', row: 1, col: 3 },
+      { value: 'e', row: 1, col: 4 },
+    ],
+    random: Array.from({ length: 25 }, (_, i) => ({
+      row: Math.max(Math.ceil(i / 5) - (i % 5 === 0 ? 0 : 1), 0),
+      col: i % 5,
+    }))
+      .sort(() => 0.5 - Math.random())
+      .map((position, i) => ({
+        ...position,
+        value: i < 10
+          ? puzzles[date][i].value
+          : 'abcdefghijklmnopqrstuvwxyz'[Math.floor(Math.random() * 26)],
+      })),
+  },
   time: date === persistedDate ? +localStorage.getItem('time') : 0,
   history: JSON.parse(localStorage.getItem('history')) ?? {},
   solvedRows: new Set(),
   started: false,
   paused: false,
-  intervals: { clock: null, autoplay: null },
+  intervals: {
+    clock: null,
+    autoplay: null,
+  },
 };
 
 const elements = {
@@ -43,6 +71,18 @@ const elements = {
       average: document.querySelector('#stats-value-average'),
       solved: document.querySelector('#stats-value-solved'),
       rate: document.querySelector('#stats-value-rate'),
+    },
+  },
+  help: {
+    dialog: document.querySelector('#help-dialog'),
+    buttons: {
+      open: document.querySelector('#help-button-open'),
+      close: document.querySelector('#help-button-close'),
+      play: document.querySelector('#help-button-play'),
+    },
+    demo: {
+      root: document.querySelector('#help-demo'),
+      tiles: document.querySelectorAll('#help-demo .tile'),
     },
   },
 };
@@ -112,31 +152,55 @@ function closeStatsDialog() {
   }
 }
 
-function checkRows(rows) {
-  state.tiles
+function openHelpDialog() {
+  elements.help.dialog.showModal();
+  if (state.started && !state.history[date]) {
+    stopClock(true);
+  }
+}
+
+function closeHelpDialog() {
+  elements.help.dialog.close();
+
+  if (state.paused && !state.history[date]) {
+    startClock();
+  }
+
+  if (!state.started) {
+    elements.help.buttons.play.textContent = 'Play'
+  }
+}
+
+function checkRows(key, rows) {
+  const tileElements = key === 'demo'
+    ? elements.help.demo.tiles
+    : elements.board.tiles;
+
+  state.tiles[key]
     .reduce((acc, { row, col, value }, i) => {
       if (rows.includes(row)) {
         acc[row] ??= { row, tiles: [], elements: [] };
         acc[row].tiles[col] = value;
-        acc[row].elements.push(elements.board.tiles[i]);
+        acc[row].elements.push(tileElements[i]);
       }
       return acc;
     }, [])
     .forEach(({ row, tiles, elements }) => {
       if (words[tiles.join('')]) {
-        state.solvedRows.add(row);
+        key === 'puzzle' && state.solvedRows.add(row);
         elements.forEach((el) => el.classList.add('solved'));
       } else {
-        state.solvedRows.delete(row);
+        key === 'puzzle' && state.solvedRows.delete(row);
         elements.forEach((el) => el.classList.remove('solved'));
       }
     });
 
-  if (state.solvedRows.size === 5 && state.started) {
+  if (key === 'puzzle' && state.solvedRows.size === 5 && state.started) {
     stopClock();
     state.history[date] = state.time;
     localStorage.setItem('history', JSON.stringify(state.history));
     elements.start.button.textContent = 'View stats';
+    elements.help.buttons.play.style.display = 'none';
     renderStats();
     setTimeout(() => {
       openStatsDialog();
@@ -146,30 +210,47 @@ function checkRows(rows) {
   }
 }
 
-function swap(tiles, a, x, y, check = true, persist = true) {
+function swapTiles(key, a, x, y) {
+  const tiles = state.tiles[key];
+  const tileElements = key === 'demo'
+    ? elements.help.demo.tiles
+    : elements.board.tiles;
+
   const b = tiles.findIndex(({ row, col }) => {
     return row === tiles[a].row + y && col === tiles[a].col + x;
   });
 
-  elements.board.tiles[a].style.setProperty('--row', tiles[b].row);
-  elements.board.tiles[a].style.setProperty('--col', tiles[b].col);
-  elements.board.tiles[b].style.setProperty('--row', tiles[a].row);
-  elements.board.tiles[b].style.setProperty('--col', tiles[a].col);
+  tileElements[a].style.setProperty('--row', tiles[b].row);
+  tileElements[a].style.setProperty('--col', tiles[b].col);
+  tileElements[b].style.setProperty('--row', tiles[a].row);
+  tileElements[b].style.setProperty('--col', tiles[a].col);
 
   [tiles[a].row, tiles[b].row] = [tiles[b].row, tiles[a].row];
   [tiles[a].col, tiles[b].col] = [tiles[b].col, tiles[a].col];
 
-  if (persist) {
+  if (key === 'puzzle') {
     localStorage.setItem('tiles', JSON.stringify(tiles));
   }
 
-  if (check) {
-    checkRows(y === 0 ? [tiles[a].row] : [tiles[a].row, tiles[b].row]);
+  if (key === 'demo') {
+    elements.help.demo.root.dataset.nudge = (
+      elements.help.demo.root.dataset.nudge === '1' &&
+      ((a === 2 && y === 1) || (a === 7 && y === -1))
+    ) ? '2' : '0';
+  }
+
+  if (key === 'puzzle' || key === 'demo') {
+    checkRows(key, y === 0 ? [tiles[a].row] : [tiles[a].row, tiles[b].row]);
   }
 }
 
-function renderTiles(tiles, handleEvents) {
-  elements.board.tiles.forEach((tile, i) => {
+function renderTiles(key, handleEvents) {
+  const tiles = state.tiles[key];
+  const tileElements = key === 'demo'
+    ? elements.help.demo.tiles
+    : elements.board.tiles;
+
+  tileElements.forEach((tile, i) => {
     tile.innerText = tiles[i].value;
     tile.style.setProperty('--row', tiles[i].row);
     tile.style.setProperty('--col', tiles[i].col);
@@ -184,7 +265,7 @@ function renderTiles(tiles, handleEvents) {
 
       tile.ontouchmove = (event) => {
         event.currentTarget.style.zIndex = 10;
-        event.currentTarget.style.boxShadow = '0px 0px 8px 2px rgba(0, 0, 0, 0.25)';
+        event.currentTarget.style.boxShadow = '0px 0px 8px 2px rgba(23, 23, 23, 0.25)';
         event.currentTarget.style.animation = 'none';
 
         const x = event.changedTouches[0].clientX - origin.x;
@@ -212,7 +293,11 @@ function renderTiles(tiles, handleEvents) {
         event.currentTarget.style.setProperty('--nudge-x', '0%');
         event.currentTarget.style.setProperty('--nudge-y', '0%');
 
-        if (!state.started || state.paused || state.history[date]) {
+        if ( key !== 'demo' && (
+          !state.started ||
+          state.paused ||
+          state.history[date]
+        )) {
           return;
         }
 
@@ -221,15 +306,15 @@ function renderTiles(tiles, handleEvents) {
 
         if (Math.abs(x) > Math.abs(y)) {
           if (x > 10 && tiles[i].col < 4) {
-            swap(tiles, i, 1, 0);
+            swapTiles(key, i, 1, 0);
           } else if (x < -10 && tiles[i].col > 0) {
-            swap(tiles, i, -1, 0);
+            swapTiles(key, i, -1, 0);
           }
         } else {
           if (y > 10 && tiles[i].row < 4) {
-            swap(tiles, i, 0, 1);
+            swapTiles(key, i, 0, 1);
           } else if (y < -10 && tiles[i].row > 0) {
-            swap(tiles, i, 0, -1);
+            swapTiles(key, i, 0, -1);
           }
         }
       };
@@ -238,35 +323,23 @@ function renderTiles(tiles, handleEvents) {
 }
 
 function startAutoplay() {
-  const tiles = Array.from({ length: 25 }, (_, i) => ({
-    row: Math.max(Math.ceil(i / 5) - (i % 5 === 0 ? 0 : 1), 0),
-    col: i % 5,
-  }))
-    .sort(() => 0.5 - Math.random())
-    .map((position, i) => ({
-      ...position,
-      value: i < 10
-        ? state.tiles[i].value
-        : 'abcdefghijklmnopqrstuvwxyz'[Math.floor(Math.random() * 26)],
-    }));
-
-  renderTiles(tiles);
+  renderTiles('random');
 
   state.intervals.autoplay = setInterval(() => {
-    const i = Math.floor(Math.random() * tiles.length);
+    const i = Math.floor(Math.random() * state.tiles.random.length);
     let [x, y] = Math.round(Math.random()) ? [1, 0] : [0, 1];
 
-    if (x && tiles[i].col === 4) {
+    if (x && state.tiles.random[i].col === 4) {
       x = -1;
-    } else if (x && tiles[i].col > 0) {
+    } else if (x && state.tiles.random[i].col > 0) {
       x = x * (Math.round(Math.random()) ? 1 : -1);
-    } else if (y && tiles[i].row === 4) {
+    } else if (y && state.tiles.random[i].row === 4) {
       y = -1;
-    } else if (y && tiles[i].row > 0) {
+    } else if (y && state.tiles.random[i].row > 0) {
       y = y * (Math.round(Math.random()) ? 1 : -1);
     }
 
-    swap(tiles, i, x, y, false, false);
+    swapTiles('random', i, x, y);
   }, 500);
 }
 
@@ -276,12 +349,13 @@ function stopAutoplay() {
 }
 
 function startGame() {
-  renderTiles(state.tiles, true);
-  checkRows([0, 1, 2, 3, 4]);
+  renderTiles('puzzle', true);
+  checkRows('puzzle', [0, 1, 2, 3, 4]);
   stopAutoplay();
   startClock();
   elements.start.root.classList.add('hidden');
   elements.clock.root.classList.remove('hidden');
+  elements.help.buttons.play.textContent = 'Continue';
   state.started = true;
   state.history[date] = null;
   localStorage.setItem('history', JSON.stringify(state.history));
@@ -313,6 +387,9 @@ function startCountdown() {
 function handleStartButtonClick() {
   if (state.history[date]) {
     openStatsDialog();
+  } else if (Object.keys(state.history).length === 0) {
+    elements.help.buttons.play.textContent = 'Continue';
+    openHelpDialog();
   } else {
     startGame();
   }
@@ -326,6 +403,14 @@ function handleClockButtonClick() {
   }
 }
 
+function handleHelpPlayButtonClick() {
+  console.log('handleHelpPlayButtonClick');
+  closeHelpDialog();
+  if (!state.started) {
+    startGame();
+  }
+}
+
 function handleVisibilityChange() {
   if (document.visibilityState === 'hidden') {
     stopClock();
@@ -336,9 +421,10 @@ function handleVisibilityChange() {
 
 function init() {
   if (state.history[date]) {
-    renderTiles(state.tiles);
-    checkRows([0, 1, 2, 3, 4]);
+    renderTiles('puzzle');
+    checkRows('puzzle', [0, 1, 2, 3, 4]);
     elements.start.button.textContent = 'View stats';
+    elements.help.buttons.play.style.display = 'none';
   } else {
     startAutoplay();
     if (state.time > 0) {
@@ -348,15 +434,20 @@ function init() {
 
   startCountdown();
   renderStats();
+  renderTiles('demo', true);
+
   elements.clock.time.textContent = formatTime(state.time);
   elements.start.button.onclick = handleStartButtonClick;
   elements.stats.buttons.open.onclick = openStatsDialog;
   elements.stats.buttons.close.onclick = closeStatsDialog;
+  elements.help.buttons.open.onclick = openHelpDialog;
+  elements.help.buttons.close.onclick = closeHelpDialog;
+  elements.help.buttons.play.onclick = handleHelpPlayButtonClick;
   elements.clock.button.onclick = handleClockButtonClick;
   document.onvisibilitychange = handleVisibilityChange;
 
   localStorage.setItem('date', date);
-  localStorage.setItem('tiles', JSON.stringify(state.tiles));
+  localStorage.setItem('tiles', JSON.stringify(state.tiles.puzzle));
   localStorage.setItem('time', state.time);
 }
 

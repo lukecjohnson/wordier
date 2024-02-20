@@ -87,12 +87,12 @@ button {
   align-items: center;
   gap: 8px;
   margin: 0;
-}
 
-.logo svg {
-  height: 36px;
-  color: var(--color-base-100);
-  margin-bottom: 4px;
+  svg {
+    height: 36px;
+    color: var(--color-base-100);
+    margin-bottom: 4px;
+  }
 }
 
 .icon {
@@ -120,11 +120,11 @@ button {
   position: relative;
   overflow: visible;
   transition: all 500ms cubic-bezier(0.25, 1, 0.5, 1);
-}
 
-#board.blurred {
-  filter: blur(min(2.5vw, 16px));
-  transform: translate3d(0, 0, 0) scale(0.95);
+  &.blurred {
+    filter: blur(min(2.5vw, 16px));
+    transform: translate3d(0, 0, 0) scale(0.95);
+  }
 }
 
 .tile {
@@ -143,12 +143,34 @@ button {
   cursor: move;
   user-select: none;
   transition: all 250ms cubic-bezier(0.61, 1, 0.88, 1);
-}
 
-.tile.solved {
-  background-color: var(--color-accent);
-  animation: jump 400ms cubic-bezier(0.65, 0, 0.35, 1);
-  animation-delay: calc((var(--col) + 1) * 50ms);
+  &.solved,
+  #help-demo &.solved {
+    background-color: var(--color-accent);
+    animation: jump 500ms linear;
+    animation-delay: calc((var(--col) + 1) * 50ms);
+  }
+
+  #help-demo & {
+    font-size: min(48px, 8vw);
+    background-color: var(--color-base-600);
+    top: calc(var(--row) * 54% + var(--nudge-y, 0px));
+  }
+
+  #help-demo[data-nudge="1"] &:nth-child(3),
+  #help-demo[data-nudge="2"] &:nth-child(9) {
+    opacity: 1;
+    z-index: 10;
+    animation: nudge 2500ms cubic-bezier(0.76, 0, 0.24, 1) infinite;
+  }
+
+  #help-demo[data-nudge="1"] &:nth-child(3) {
+    --nudge: translateY(25%);
+  }
+
+  #help-demo[data-nudge="2"] &:nth-child(9) {
+    --nudge: translateX(25%);
+  }
 }
 
 #clock {
@@ -160,19 +182,19 @@ button {
   grid-column: 1;
   transition: all 500ms cubic-bezier(0.25, 1, 0.5, 1);
   transition-delay: 250ms;
-}
 
-#clock.hidden {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transform: translateY(calc(100% + 6vh));
-  transition-delay: 1000ms;
-}
+  &.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(calc(100% + 6vh));
+    transition-delay: 1000ms;
+  }
 
-#clock.paused .clock-icon-pause,
-#clock:not(.paused) .clock-icon-play {
-  display: none;
+  &.paused #clock-icon-pause,
+  &:not(.paused) #clock-icon-play {
+    display: none;
+  }
 }
 
 #clock-button {
@@ -203,15 +225,15 @@ button {
   box-shadow: 0 0 30vh 30vh var(--color-base-800);
   transition: all 500ms cubic-bezier(0.25, 1, 0.5, 1);
   transition-delay: 1000ms;
-}
 
-.start.hidden {
-  opacity: 0;
-  visibility: none;
-  pointer-events: none;
-  box-shadow: 0 0 0 0 var(--color-base-800);
-  transform: translateY(calc(100% + 6vh));
-  transition-delay: 0ms;
+  &.hidden {
+    opacity: 0;
+    visibility: none;
+    pointer-events: none;
+    box-shadow: 0 0 0 0 var(--color-base-800);
+    transform: translateY(calc(100% + 6vh));
+    transition-delay: 0ms;
+  }
 }
 
 .dialog {
@@ -230,18 +252,18 @@ button {
   border: none;
   outline: none;
   transition: all 500ms cubic-bezier(0.25, 1, 0.5, 1);
-}
 
-.dialog:not([open]) {
-  display: block;
-  visibility: hidden;
-  pointer-events: none;
-  transform: translateY(100%);
-  box-shadow: 0 0 0 100vmax transparent;
-}
+  &:not([open]) {
+    display: block;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(100%);
+    box-shadow: 0 0 0 100vmax transparent;
+  }
 
-.dialog::backdrop {
-  display: none;
+  &::backdrop {
+    display: none;
+  }
 }
 
 .dialog-header {
@@ -285,10 +307,19 @@ button {
   font-size: 24px;
 }
 
-@keyframes jump {
-  50% {
-    transform: translateY(-0.125em);
-  }
+#help-demo {
+  width: 100%;
+  aspect-ratio: 2.625;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: visible;
+}
+
+#help-instructions {
+  text-align: center;
+  line-height: 1.25;
+  color: var(--color-base-300);
+  margin: 0;
 }
 
 @media (hover: hover) {
@@ -316,5 +347,18 @@ button {
   .dialog:not([open]) {
     transform: translateY(20px);
     opacity: 0;
+  }
+}
+
+@keyframes jump {
+  50% {
+    transform: translateY(-0.125em);
+  }
+}
+
+@keyframes nudge {
+  50% {
+    box-shadow: 0px 0px 8px 2px rgba(23, 23, 23, 0.5);
+    transform: var(--nudge);
   }
 }
