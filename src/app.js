@@ -324,23 +324,24 @@ function renderTiles(key, handleEvents) {
 
 function startAutoplay() {
   renderTiles('random');
+  setTimeout(() => {
+    state.intervals.autoplay = setInterval(() => {
+      const i = Math.floor(Math.random() * state.tiles.random.length);
+      let [x, y] = Math.round(Math.random()) ? [1, 0] : [0, 1];
 
-  state.intervals.autoplay = setInterval(() => {
-    const i = Math.floor(Math.random() * state.tiles.random.length);
-    let [x, y] = Math.round(Math.random()) ? [1, 0] : [0, 1];
+      if (x && state.tiles.random[i].col === 4) {
+        x = -1;
+      } else if (x && state.tiles.random[i].col > 0) {
+        x = x * (Math.round(Math.random()) ? 1 : -1);
+      } else if (y && state.tiles.random[i].row === 4) {
+        y = -1;
+      } else if (y && state.tiles.random[i].row > 0) {
+        y = y * (Math.round(Math.random()) ? 1 : -1);
+      }
 
-    if (x && state.tiles.random[i].col === 4) {
-      x = -1;
-    } else if (x && state.tiles.random[i].col > 0) {
-      x = x * (Math.round(Math.random()) ? 1 : -1);
-    } else if (y && state.tiles.random[i].row === 4) {
-      y = -1;
-    } else if (y && state.tiles.random[i].row > 0) {
-      y = y * (Math.round(Math.random()) ? 1 : -1);
-    }
-
-    swapTiles('random', i, x, y);
-  }, 500);
+      swapTiles('random', i, x, y);
+    }, 500);
+  }, 500)
 }
 
 function stopAutoplay() {
