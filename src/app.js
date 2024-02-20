@@ -1,3 +1,4 @@
+import { inject as injectAnalyticsScript } from '@vercel/analytics';
 import { puzzles } from './puzzles';
 import { words } from './words';
 
@@ -470,6 +471,8 @@ function init() {
   localStorage.setItem('date', date);
   localStorage.setItem('tiles', JSON.stringify(state.tiles.puzzle));
   localStorage.setItem('time', state.time);
+
+  injectAnalyticsScript();
 }
 
 document.addEventListener('DOMContentLoaded', init);
