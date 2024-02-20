@@ -133,7 +133,7 @@ function renderStats() {
     ? `${Math.round((solved.length / all.length) * 100)}%`
     : '–';
 
-  elements.stats.buttons.share.style.display = history[date] && navigator.share
+  elements.stats.buttons.share.style.display = state.history[date] && navigator.share
     ? ''
     : 'none';
 }
@@ -385,6 +385,17 @@ function startCountdown() {
   setInterval(renderCountdown, 60000);
 }
 
+function share() {
+  if (navigator.share && state.history[date])
+    navigator.share({
+      title: 'Play Wordier',
+      url: 'https://wordier.xyz',
+      text: `I solved today's Wordier puzzle in ${formatTime(
+        state.history[date],
+      )}! Can you beat it?`,
+    });
+}
+
 function handleStartButtonClick() {
   if (state.history[date]) {
     openStatsDialog();
@@ -441,6 +452,7 @@ function init() {
   elements.start.button.onclick = handleStartButtonClick;
   elements.stats.buttons.open.onclick = openStatsDialog;
   elements.stats.buttons.close.onclick = closeStatsDialog;
+  elements.stats.buttons.share.onclick = share;
   elements.help.buttons.open.onclick = openHelpDialog;
   elements.help.buttons.close.onclick = closeHelpDialog;
   elements.help.buttons.play.onclick = handleHelpPlayButtonClick;
