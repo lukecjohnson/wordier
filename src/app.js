@@ -1,14 +1,25 @@
 import { puzzles } from './puzzles';
 import { words } from './words';
 
+function getTilePos(i) {
+  return {
+    row: Math.max(Math.ceil(i / 5) - (i % 5 === 0 ? 0 : 1), 0),
+    col: i % 5,
+  }
+}
+
 const persistedDate = localStorage.getItem('date');
 const date = new Date().toISOString().split('T')[0];
+const initialTiles = puzzles[date].map((value, i) => ({
+  value,
+  ...getTilePos(i)
+}));
 
 const state = {
   tiles: {
     puzzle: date === persistedDate
       ? JSON.parse(localStorage.getItem('tiles'))
-      : puzzles[date],
+      : initialTiles,
     demo: [
       { value: 's', row: 0, col: 0 },
       { value: 'h', row: 0, col: 1 },
@@ -21,15 +32,12 @@ const state = {
       { value: 'r', row: 1, col: 3 },
       { value: 'e', row: 1, col: 4 },
     ],
-    random: Array.from({ length: 25 }, (_, i) => ({
-      row: Math.max(Math.ceil(i / 5) - (i % 5 === 0 ? 0 : 1), 0),
-      col: i % 5,
-    }))
+    random: Array.from({ length: 25 }, (_, i) => getTilePos(i))
       .sort(() => 0.5 - Math.random())
-      .map((position, i) => ({
-        ...position,
+      .map((pos, i) => ({
+        ...pos,
         value: i < 10
-          ? puzzles[date][i].value
+          ? initialTiles[i].value
           : 'abcdefghijklmnopqrstuvwxyz'[Math.floor(Math.random() * 26)],
       })),
   },
