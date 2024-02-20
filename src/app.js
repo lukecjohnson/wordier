@@ -211,6 +211,7 @@ function checkRows(key, rows) {
     elements.start.button.textContent = 'View stats';
     elements.help.buttons.play.style.display = 'none';
     renderStats();
+    renderCountdown();
     setTimeout(() => {
       openStatsDialog();
       elements.start.root.classList.remove('hidden');
@@ -265,42 +266,42 @@ function renderTiles(key, handleEvents) {
     tile.style.setProperty('--col', tiles[i].col);
 
     if (handleEvents) {
-      const origin = { x: 0, y: 0 };
+      let origin;
 
-      tile.ontouchstart = (event) => {
-        origin.x = event.touches[0].clientX;
-        origin.y = event.touches[0].clientY;
-      };
+      tile.onpointerdown = (event) => {
+        tile.setPointerCapture(event.pointerId);
+        origin = { x: event.clientX, y: event.clientY }
+      }
 
-      tile.ontouchmove = (event) => {
-        event.currentTarget.style.zIndex = 10;
-        event.currentTarget.style.boxShadow = '0px 0px 8px 2px rgba(23, 23, 23, 0.25)';
-        event.currentTarget.style.animation = 'none';
+      tile.onpointermove = (event) => {
+        if (!origin) {
+          return;
+        }
 
-        const x = event.changedTouches[0].clientX - origin.x;
-        const y = event.changedTouches[0].clientY - origin.y;
+        tile.style.zIndex = 10;
+        tile.style.boxShadow = '0px 0px 8px 2px rgba(23, 23, 23, 0.25)';
+        tile.style.animation = 'none';
+
+        const x = event.clientX - origin.x;
+        const y = event.clientY - origin.y;
 
         if (Math.abs(x) > Math.abs(y)) {
-          event.currentTarget.style.setProperty('--nudge-y', '0%');
-          event.currentTarget.style.setProperty(
-            '--nudge-x',
-            x > 0 ? '5%' : '-5%',
-          );
+          tile.style.setProperty('--nudge-y', '0%');
+          tile.style.setProperty('--nudge-x', x > 0 ? '5%' : '-5%');
         } else {
-          event.currentTarget.style.setProperty('--nudge-x', '0%');
-          event.currentTarget.style.setProperty(
-            '--nudge-y',
-            y > 0 ? '5%' : '-5%',
-          );
+          tile.style.setProperty('--nudge-x', '0%');
+          tile.style.setProperty('--nudge-y', y > 0 ? '5%' : '-5%');
         }
-      };
+      }
 
-      tile.ontouchend = (event) => {
-        event.currentTarget.style.zIndex = 0;
-        event.currentTarget.style.boxShadow = '';
-        event.currentTarget.style.animation = '';
-        event.currentTarget.style.setProperty('--nudge-x', '0%');
-        event.currentTarget.style.setProperty('--nudge-y', '0%');
+      tile.onpointerup = (event) => {
+        tile.releasePointerCapture(event.pointerId);
+
+        tile.style.zIndex = 0;
+        tile.style.boxShadow = '';
+        tile.style.animation = '';
+        tile.style.setProperty('--nudge-x', '0%');
+        tile.style.setProperty('--nudge-y', '0%');
 
         if ( key !== 'demo' && (
           !state.started ||
@@ -310,8 +311,8 @@ function renderTiles(key, handleEvents) {
           return;
         }
 
-        const x = event.changedTouches[0].clientX - origin.x;
-        const y = event.changedTouches[0].clientY - origin.y;
+        const x = event.clientX - origin.x;
+        const y = event.clientY - origin.y;
 
         if (Math.abs(x) > Math.abs(y)) {
           if (x > 10 && tiles[i].col < 4) {
@@ -326,7 +327,9 @@ function renderTiles(key, handleEvents) {
             swapTiles(key, i, 0, -1);
           }
         }
-      };
+
+        origin = null;
+      }
     }
   });
 }
