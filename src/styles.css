@@ -27,7 +27,8 @@ body,
   height: 100%;
 }
 
-html {
+html,
+body {
   overflow: hidden;
 }
 
