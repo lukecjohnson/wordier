@@ -398,14 +398,13 @@ function startCountdown() {
 }
 
 function share() {
-  if (navigator.share && state.history[date])
-    navigator.share({
-      title: 'Play Wordier',
-      url: 'https://wordier.xyz',
-      text: `I solved today's Wordier puzzle in ${formatTime(
-        state.history[date],
-      )}! Can you beat it?`,
-    });
+  navigator.share({
+    title: 'Play Wordier',
+    url: 'https://wordier.xyz',
+    text: `I solved today's Wordier puzzle in ${formatTime(
+      state.history[date],
+    )}! Can you beat it?`,
+  });
 }
 
 function handleStartButtonClick() {
