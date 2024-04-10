@@ -6,7 +6,7 @@
     "dev": "esbuild src/app.js src/styles.css \"--external:*.woff2\" --bundle --outdir=public --servedir=public"
   },
   "devDependencies": {
-    "esbuild": "^0.20.0"
+    "esbuild": "^0.20.2"
   },
   "dependencies": {
     "@vercel/analytics": "^1.2.2"
