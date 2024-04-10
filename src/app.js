@@ -6,14 +6,14 @@ function getTilePos(i) {
   return {
     row: Math.max(Math.ceil(i / 5) - (i % 5 === 0 ? 0 : 1), 0),
     col: i % 5,
-  }
+  };
 }
 
 const persistedDate = localStorage.getItem('date');
 const date = new Date().toISOString().split('T')[0];
 const initialTiles = puzzles[date].map((value, i) => ({
   value,
-  ...getTilePos(i)
+  ...getTilePos(i),
 }));
 
 const state = {
@@ -59,8 +59,8 @@ const elements = {
     tiles: document.querySelectorAll('#board .tile'),
   },
   start: {
-    root: document.querySelector('.start'),
-    button: document.querySelector('.start .button'),
+    root: document.querySelector('#start'),
+    button: document.querySelector('#start-button'),
     countdown: document.querySelector('#start-countdown'),
   },
   clock: {
@@ -176,7 +176,7 @@ function closeHelpDialog() {
   }
 
   if (!state.started) {
-    elements.help.buttons.play.textContent = 'Play'
+    elements.help.buttons.play.textContent = 'Play';
   }
 }
 
@@ -270,8 +270,8 @@ function renderTiles(key, handleEvents) {
 
       tile.onpointerdown = (event) => {
         tile.setPointerCapture(event.pointerId);
-        origin = { x: event.clientX, y: event.clientY }
-      }
+        origin = { x: event.clientX, y: event.clientY };
+      };
 
       tile.onpointermove = (event) => {
         if (!origin) {
@@ -292,7 +292,7 @@ function renderTiles(key, handleEvents) {
           tile.style.setProperty('--nudge-x', '0%');
           tile.style.setProperty('--nudge-y', y > 0 ? '5%' : '-5%');
         }
-      }
+      };
 
       tile.onpointerup = (event) => {
         tile.releasePointerCapture(event.pointerId);
@@ -303,11 +303,10 @@ function renderTiles(key, handleEvents) {
         tile.style.setProperty('--nudge-x', '0%');
         tile.style.setProperty('--nudge-y', '0%');
 
-        if ( key !== 'demo' && (
-          !state.started ||
-          state.paused ||
-          state.history[date]
-        )) {
+        if (
+          key !== 'demo' &&
+          (!state.started || state.paused || state.history[date])
+        ) {
           return;
         }
 
@@ -329,7 +328,7 @@ function renderTiles(key, handleEvents) {
         }
 
         origin = null;
-      }
+      };
     }
   });
 }
@@ -353,7 +352,7 @@ function startAutoplay() {
 
       swapTiles('random', i, x, y);
     }, 500);
-  }, 500)
+  }, 500);
 }
 
 function stopAutoplay() {
@@ -427,7 +426,6 @@ function handleClockButtonClick() {
 }
 
 function handleHelpPlayButtonClick() {
-  console.log('handleHelpPlayButtonClick');
   closeHelpDialog();
   if (!state.started) {
     startGame();
