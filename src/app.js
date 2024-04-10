@@ -18,9 +18,10 @@ const initialTiles = puzzles[date].map((value, i) => ({
 
 const state = {
   tiles: {
-    puzzle: date === persistedDate
-      ? JSON.parse(localStorage.getItem('tiles'))
-      : initialTiles,
+    puzzle:
+      date === persistedDate
+        ? JSON.parse(localStorage.getItem('tiles'))
+        : initialTiles,
     demo: [
       { value: 's', row: 0, col: 0 },
       { value: 'h', row: 0, col: 1 },
@@ -37,9 +38,10 @@ const state = {
       .sort(() => 0.5 - Math.random())
       .map((pos, i) => ({
         ...pos,
-        value: i < 10
-          ? initialTiles[i].value
-          : 'abcdefghijklmnopqrstuvwxyz'[Math.floor(Math.random() * 26)],
+        value:
+          i < 10
+            ? initialTiles[i].value
+            : 'abcdefghijklmnopqrstuvwxyz'[Math.floor(Math.random() * 26)],
       })),
   },
   time: date === persistedDate ? +localStorage.getItem('time') : 0,
@@ -130,21 +132,19 @@ function renderStats() {
     ? formatTime(state.history[date])
     : '-';
 
-  elements.stats.values.average.textContent = solved.length > 0
-    ? formatTime(Math.round(totalTime / solved.length))
-    : '–';
+  elements.stats.values.average.textContent =
+    solved.length > 0 ? formatTime(Math.round(totalTime / solved.length)) : '–';
 
-  elements.stats.values.solved.textContent = solved.length > 0
-    ? solved.length
-    : '–';
+  elements.stats.values.solved.textContent =
+    solved.length > 0 ? solved.length : '–';
 
-  elements.stats.values.rate.textContent = solved.length > 0
-    ? `${Math.round((solved.length / all.length) * 100)}%`
-    : '–';
+  elements.stats.values.rate.textContent =
+    solved.length > 0
+      ? `${Math.round((solved.length / all.length) * 100)}%`
+      : '–';
 
-  elements.stats.buttons.share.style.display = state.history[date] && navigator.share
-    ? ''
-    : 'none';
+  elements.stats.buttons.share.style.display =
+    state.history[date] && navigator.share ? '' : 'none';
 }
 
 function openStatsDialog() {
@@ -181,9 +181,8 @@ function closeHelpDialog() {
 }
 
 function checkRows(key, rows) {
-  const tileElements = key === 'demo'
-    ? elements.help.demo.tiles
-    : elements.board.tiles;
+  const tileElements =
+    key === 'demo' ? elements.help.demo.tiles : elements.board.tiles;
 
   state.tiles[key]
     .reduce((acc, { row, col, value }, i) => {
@@ -222,9 +221,8 @@ function checkRows(key, rows) {
 
 function swapTiles(key, a, x, y) {
   const tiles = state.tiles[key];
-  const tileElements = key === 'demo'
-    ? elements.help.demo.tiles
-    : elements.board.tiles;
+  const tileElements =
+    key === 'demo' ? elements.help.demo.tiles : elements.board.tiles;
 
   const b = tiles.findIndex(({ row, col }) => {
     return row === tiles[a].row + y && col === tiles[a].col + x;
@@ -243,10 +241,11 @@ function swapTiles(key, a, x, y) {
   }
 
   if (key === 'demo') {
-    elements.help.demo.root.dataset.nudge = (
+    elements.help.demo.root.dataset.nudge =
       elements.help.demo.root.dataset.nudge === '1' &&
       ((a === 2 && y === 1) || (a === 7 && y === -1))
-    ) ? '2' : '0';
+        ? '2'
+        : '0';
   }
 
   if (key === 'puzzle' || key === 'demo') {
@@ -256,9 +255,8 @@ function swapTiles(key, a, x, y) {
 
 function renderTiles(key, handleEvents) {
   const tiles = state.tiles[key];
-  const tileElements = key === 'demo'
-    ? elements.help.demo.tiles
-    : elements.board.tiles;
+  const tileElements =
+    key === 'demo' ? elements.help.demo.tiles : elements.board.tiles;
 
   tileElements.forEach((tile, i) => {
     tile.innerText = tiles[i].value;
@@ -376,19 +374,15 @@ function startGame() {
 function renderCountdown() {
   const tomorrow = new Date();
   tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
-  tomorrow.setUTCHours(0, 0, 0, 0);
+  tomorrow.setUTCHours(5, 0, 0, 0);
 
   const diff = Math.ceil((tomorrow.getTime() - Date.now()) / 60000);
 
-  elements.start.countdown.textContent = (
-    state.history[date]
+  elements.start.countdown.textContent =
+    (state.history[date]
       ? 'Next daily puzzle begins in '
-      : "Today's puzzle ends in "
-  ) + (
-    diff <= 60
-      ? `${diff} minutes`
-      : `${Math.ceil(diff / 60)} hours`
-  );
+      : "Today's puzzle ends in ") +
+    (diff <= 60 ? `${diff} minutes` : `${Math.ceil(diff / 60)} hours`);
 }
 
 function startCountdown() {
