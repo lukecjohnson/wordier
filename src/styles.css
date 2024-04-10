@@ -1,8 +1,8 @@
 @font-face {
-  font-family: "GT Flexa";
+  font-family: 'GT Flexa';
   font-weight: 400;
   font-style: normal;
-  src: url("/GT-Flexa-Standard-Regular.woff2") format("woff2");
+  src: url('/GT-Flexa-Standard-Regular.woff2') format('woff2');
 }
 
 :root {
@@ -39,7 +39,7 @@ body {
   align-items: center;
   background-color: var(--color-base-800);
   color: var(--color-base-100);
-  font-family: "GT Flexa", system-ui, ui-sans-serif, sans-serif;
+  font-family: 'GT Flexa', system-ui, ui-sans-serif, sans-serif;
   line-height: 1;
   -webkit-text-size-adjust: 100%;
   -webkit-font-smoothing: antialiased;
@@ -109,7 +109,7 @@ button {
   position: relative;
   overflow: visible;
   transition: all 500ms cubic-bezier(0.65, 0, 0.35, 1);
-  animation: blur-in 1500ms cubic-bezier(0.65, 0, 0.35, 1);
+  animation: blur-in 1000ms cubic-bezier(0.65, 0, 0.35, 1);
   animation-fill-mode: backwards;
 
   &.blurred {
@@ -148,18 +148,18 @@ button {
     top: calc(var(--row) * 54% + var(--nudge-y, 0px));
   }
 
-  #help-demo[data-nudge="1"] &:nth-child(3),
-  #help-demo[data-nudge="2"] &:nth-child(9) {
+  #help-demo[data-nudge='1'] &:nth-child(3),
+  #help-demo[data-nudge='2'] &:nth-child(9) {
     opacity: 1;
     z-index: 10;
     animation: nudge 2500ms cubic-bezier(0.76, 0, 0.24, 1) infinite;
   }
 
-  #help-demo[data-nudge="1"] &:nth-child(3) {
+  #help-demo[data-nudge='1'] &:nth-child(3) {
     --nudge: translateY(25%);
   }
 
-  #help-demo[data-nudge="2"] &:nth-child(9) {
+  #help-demo[data-nudge='2'] &:nth-child(9) {
     --nudge: translateX(25%);
   }
 }
@@ -231,11 +231,11 @@ button {
 #start-countdown {
   animation: slide-in 750ms cubic-bezier(0.65, 0, 0.35, 1);
   animation-fill-mode: backwards;
-  animation-delay: 750ms;
+  animation-delay: 500ms;
 }
 
 #start-countdown {
-  animation-delay: 1000ms;
+  animation-delay: 750ms;
 }
 
 .dialog {
