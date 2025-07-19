@@ -1,140 +1,84 @@
 <!doctype html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wordier</title>
-  <link rel="icon" sizes="32x32" href="icon-32x32.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="icon-180x180.png">
-  <link rel="apple-touch-icon" sizes="192x192" href="icon-192x192.png">
-  <link rel="stylesheet" href="/styles.css" />
-</head>
-
-<body>
-  <header id="header">
-    <button id="stats-button-open" class="icon-button">
-      <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="1.5"
-        stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wordier</title>
+    <link rel="icon" sizes="32x32" href="icon-32x32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="icon-180x180.png" />
+    <link rel="apple-touch-icon" sizes="192x192" href="icon-192x192.png" />
+    <style>
+      @font-face {
+        font-family: 'GT Flexa';
+        font-weight: 400;
+        font-style: normal;
+        src: url('/GT-Flexa-Standard-Regular.woff2') format('woff2');
+      }
+    </style>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body data-tutorial-step="1">
+    <header id="header">
+      <button id="header-stats" class="icon-button">
+        <svg
+          class="icon"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke-width="1.5"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496
           6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125
           1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125
           1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125
           1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125
-          1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
-      </svg>
-    </button>
-    <h1 id="logo">wordier</h1>
-    <button id="help-button-open" class="icon-button">
-      <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
-        <circle cx="12" cy="12" r="10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-          stroke-linejoin="round" />
-        <path d="M7.91681 8.91712C7.91482 8.96422 7.92248 9.01123 7.93932 9.05525C7.95616 9.09928
-          7.98183 9.13939 8.01475 9.17313C8.04767 9.20687 8.08714 9.23352 8.13074 9.25144C8.17434
-          9.26936 8.22114 9.27817 8.26827 9.27733H9.4714C9.67265 9.27733 9.83306 9.11254 9.85931
-          8.91275C9.99056 7.95608 10.6468 7.259 11.8164 7.259C12.8168 7.259 13.7326 7.75921 13.7326
-          8.96233C13.7326 9.88837 13.1872 10.3142 12.3254 10.9617C11.3439 11.6748 10.5666 12.5075
-          10.622 13.8594L10.6264 14.1759C10.6279 14.2716 10.667 14.3628 10.7352 14.4299C10.8034
-          14.497 10.8953 14.5346 10.991 14.5346H12.1737C12.2704 14.5346 12.3631 14.4962 12.4315
-          14.4278C12.4999 14.3595 12.5383 14.2667 12.5383 14.17V14.0169C12.5383 12.9698 12.9364
-          12.665 14.0112 11.8498C14.8993 11.1746 15.8254 10.425 15.8254 8.8515C15.8254 6.64796
-          13.9645 5.58337 11.9272 5.58337C10.0795 5.58337 8.05536 6.44379 7.91681 8.91712ZM10.1874
-          17.3215C10.1874 18.0988 10.8072 18.6734 11.6604 18.6734C12.5485 18.6734 13.1595 18.0988
-          13.1595 17.3215C13.1595 16.5165 12.547 15.9507 11.6589 15.9507C10.8072 15.9507 10.1874
-          16.5165 10.1874 17.3215Z" fill="currentColor" />
-      </svg>
-    </button>
-  </header>
-  <div id="board">
-    <div class="tile"></div>
-    <div class="tile"></div>
-    <div class="tile"></div>
-    <div class="tile"></div>
-    <div class="tile"></div>
-    <div class="tile"></div>
-    <div class="tile"></div>
-    <div class="tile"></div>
-    <div class="tile"></div>
-    <div class="tile"></div>
-    <div class="tile"></div>
-    <div class="tile"></div>
-    <div class="tile"></div>
-    <div class="tile"></div>
-    <div class="tile"></div>
-    <div class="tile"></div>
-    <div class="tile"></div>
-    <div class="tile"></div>
-    <div class="tile"></div>
-    <div class="tile"></div>
-    <div class="tile"></div>
-    <div class="tile"></div>
-    <div class="tile"></div>
-    <div class="tile"></div>
-    <div class="tile"></div>
-  </div>
-  <div id="clock" class="hidden">
-    <button id="clock-button">
-      <svg id="clock-icon-pause" class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-        stroke-width="1.5" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round"
-          d="M14.25 9v6m-4.5 0V9M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-      </svg>
-      <svg id="clock-icon-play" class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-        stroke-width="1.5" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-        <path stroke-linecap="round" stroke-linejoin="round" d="M15.91 11.672a.375.375 0 0 1 0 .656l-5.603 3.113a.375.375 0 0
-          1-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112Z" />
-      </svg>
-      <span id="clock-time">0:00<span>
-    </button>
-  </div>
-  <div id="start">
-    <button id="start-button" class="button">Play</button>
-    <div id="start-countdown"></div>
-  </div>
-  <dialog id="stats-dialog" class="dialog">
-    <header class="dialog-header">
-      <div class="dialog-title">Stats</div>
-      <button id="stats-button-close" class="icon-button dialog-button-close">
-        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="1.5"
-          stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+          1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z"
+          />
+        </svg>
+      </button>
+      <h1 id="header-logo">wordier</h1>
+      <button id="header-help" class="icon-button">
+        <svg
+          class="icon"
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          fill="none"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="1.5"
+          />
+          <path
+            fill="currentColor"
+            d="M10.721 16.105h2.376v2.322h-2.376v-2.322ZM8.165 9.643c0-1.272.348-2.268 1.044-2.988.696-.72 1.668-1.08 2.916-1.08.732 0 1.374.144 1.926.432a3.117 3.117 0 0 1 1.314 1.17c.312.504.468 1.086.468 1.746v.018c0 .54-.114 1.038-.342 1.494a2.825 2.825 0 0 1-.954 1.098l-.702.468c-.336.216-.576.408-.72.576-.144.156-.24.348-.288.576-.048.216-.072.546-.072.99v.504h-1.71v-.918c0-.672.09-1.194.27-1.566.192-.384.546-.744 1.062-1.08l.702-.468c.6-.408.9-.96.9-1.656V8.94c0-.516-.174-.936-.522-1.26-.348-.324-.792-.486-1.332-.486-.684 0-1.224.222-1.62.666-.384.432-.576 1.026-.576 1.782v.324H8.165v-.324Z"
+          />
         </svg>
       </button>
     </header>
-    <div id="stats">
-      <div class="stat">
-        <div class="stat-title">Today</div>
-        <div id="stats-value-today" class="stat-value">–</div>
-      </div>
-      <div class="stat">
-        <div class="stat-title">Average</div>
-        <div id="stats-value-average" class="stat-value">–</div>
-      </div>
-      <div class="stat">
-        <div class="stat-title">Puzzles solved</div>
-        <div id="stats-value-solved" class="stat-value">–</div>
-      </div>
-      <div class="stat">
-        <div class="stat-title">Solve rate</div>
-        <div id="stats-value-rate" class="stat-value">–</div>
-      </div>
-    </div>
-    <button id="stats-button-share" class="button dialog-button-primary">
-      Share
-    </button>
-  </dialog>
-  <dialog id="help-dialog" class="dialog">
-    <header class="dialog-header">
-      <div class="dialog-title">How to Play</div>
-      <button id="help-button-close" class="icon-button dialog-button-close">
-        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="1.5"
-          stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-        </svg>
-      </button>
-    </header>
-    <div id="help-demo" data-nudge="1">
+    <div id="board">
+      <div class="tile"></div>
+      <div class="tile"></div>
+      <div class="tile"></div>
+      <div class="tile"></div>
+      <div class="tile"></div>
+      <div class="tile"></div>
+      <div class="tile"></div>
+      <div class="tile"></div>
+      <div class="tile"></div>
+      <div class="tile"></div>
+      <div class="tile"></div>
+      <div class="tile"></div>
+      <div class="tile"></div>
+      <div class="tile"></div>
+      <div class="tile"></div>
       <div class="tile"></div>
       <div class="tile"></div>
       <div class="tile"></div>
@@ -146,16 +90,142 @@
       <div class="tile"></div>
       <div class="tile"></div>
     </div>
-    <p id="help-instructions">
-      Swap letters up, down, left, or right.
-      <br />
-      Make a valid 5-letter word with each row.
-    </p>
-    <button id="help-button-play" class="button dialog-button-primary">
-      Play
-    </button>
-  </dialog>
-  <script src="/app.js"></script>
-</body>
-
+    <div id="counter">
+      <div id="counter-value">
+        <div id="counter-value-tens" class="counter-value-place">
+          <div>0</div>
+          <div>1</div>
+          <div>2</div>
+          <div>3</div>
+          <div>4</div>
+          <div>5</div>
+          <div>6</div>
+          <div>7</div>
+          <div>8</div>
+          <div>9</div>
+        </div>
+        <div id="counter-value-ones" class="counter-value-place">
+          <div>0</div>
+          <div>1</div>
+          <div>2</div>
+          <div>3</div>
+          <div>4</div>
+          <div>5</div>
+          <div>6</div>
+          <div>7</div>
+          <div>8</div>
+          <div>9</div>
+        </div>
+      </div>
+      <div id="counter-label">moves remaining</div>
+    </div>
+    <div id="footer">
+      <button id="footer-button" class="button">
+        <span id="footer-button-play">Play</span>
+        <span id="footer-button-continue">Continue playing</span>
+        <span id="footer-button-stats">View stats</span>
+      </button>
+      <div id="footer-countdown">
+        <span id="footer-countdown-current">Today's puzzle ends in</span>
+        <span id="footer-countdown-next">Next daily puzzle begins in</span>
+        <span id="footer-countdown-time"></span>
+      </div>
+    </div>
+    <dialog id="stats-dialog" class="dialog">
+      <header class="dialog-header">
+        <div class="dialog-title">Stats</div>
+        <form method="dialog">
+          <button class="icon-button">
+            <svg
+              class="icon"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="none"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="1.5"
+              />
+              <path
+                fill="currentColor"
+                d="m11.92 13.216-2.916 2.916L7.87 14.98l2.916-2.916L7.87 9.166l1.152-1.152 2.916 2.898L14.98 7.87l1.152 1.134-3.06 3.06 2.916 2.916-1.152 1.152-2.916-2.916Z"
+              />
+            </svg>
+          </button>
+        </form>
+      </header>
+      <div id="stats">
+        <div class="stat">
+          <div class="stat-title">Moves</div>
+          <div id="stats-moves" class="stat-value">&ndash;</div>
+        </div>
+        <div class="stat">
+          <div class="stat-title">Average</div>
+          <div id="stats-avg" class="stat-value">&ndash;</div>
+        </div>
+        <div class="stat">
+          <div class="stat-title">Puzzles solved</div>
+          <div id="stats-solved" class="stat-value">&ndash;</div>
+        </div>
+        <div class="stat">
+          <div class="stat-title">Solve rate</div>
+          <div id="stats-rate" class="stat-value">&ndash;</div>
+        </div>
+      </div>
+      <button id="stats-share" class="button dialog-button">Share</button>
+    </dialog>
+    <dialog id="help-dialog" class="dialog">
+      <header class="dialog-header">
+        <div class="dialog-title">How to play</div>
+        <form method="dialog">
+          <button class="icon-button">
+            <svg
+              class="icon"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="none"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="1.5"
+              />
+              <path
+                fill="currentColor"
+                d="m11.92 13.216-2.916 2.916L7.87 14.98l2.916-2.916L7.87 9.166l1.152-1.152 2.916 2.898L14.98 7.87l1.152 1.134-3.06 3.06 2.916 2.916-1.152 1.152-2.916-2.916Z"
+              />
+            </svg>
+          </button>
+        </form>
+      </header>
+      <div id="help-tutorial">
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+      </div>
+      <p id="help-instructions">
+        Swap letters up, down, left, or right.
+        <br />
+        Make a valid 5-letter word with each row.
+        <br />
+        Complete the puzzle in 50 moves or less.
+      </p>
+      <button id="help-button" class="button dialog-button">Continue</button>
+    </dialog>
+    <script src="/app.js"></script>
+  </body>
 </html>
