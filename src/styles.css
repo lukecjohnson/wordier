@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 :root {
   --slate-100: #f9fafb;
   --slate-200: #c9cccf;
@@ -11,12 +15,15 @@
   --red-200: #e05252;
   --red-400: #cc3333;
   --yellow-400: #fcd34d;
-  --green-200: oklch(0.75 0.2 160);
-  --green-400: oklch(0.65 0.2 160);
+  --green-200: #00d281;
+  --green-400: #00995d;
 }
 
-* {
-  box-sizing: border-box;
+@supports (color: oklch(0% 0 0)) {
+  :root {
+    --green-200: oklch(0.75 0.2 160);
+    --green-400: oklch(0.65 0.2 160);
+  }
 }
 
 html,
@@ -421,11 +428,11 @@ button {
     max-width: 480px;
     top: 0;
     border-radius: 16px;
-  }
 
-  .dialog:not([open]) {
-    transform: translateY(20px);
-    opacity: 0;
+    &:not([open]) {
+      transform: translateY(20px);
+      opacity: 0;
+    }
   }
 }
 
