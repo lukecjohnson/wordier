@@ -308,8 +308,8 @@ elements.footer.button.onclick = () => {
   }
 };
 
-elements.stats.share.onclick = () => {
-  navigator.share({
+elements.stats.share.onclick = async () => {
+  await navigator.share({
     title: 'Play Wordier',
     url: 'https://wordier.xyz',
     text:
